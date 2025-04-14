@@ -1,0 +1,21 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = sns.load_dataset("penguins").dropna()
+
+# Regression Plot
+sns.regplot(x="bill_length_mm", y="bill_depth_mm", data=df, color="blue", line_kws={'color':'red'})
+plt.title("Bill Length vs Bill Depth")
+plt.show()
+
+# Correlation Heatmap
+sns.heatmap(df.iloc[:, 2:6].corr(), annot=True, cmap="coolwarm")
+plt.title("Correlation Heatmap")
+plt.show()
+
+# Pair Plot with Regression Lines
+sns.pairplot(df, kind="reg", hue="species")
+plt.show()
+
+# Covariance Matrix
+print("Covariance Matrix:\n", df.iloc[:, 2:6].cov())
