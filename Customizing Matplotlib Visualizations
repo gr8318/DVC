@@ -1,0 +1,35 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Line Plot
+x = np.linspace(0, 10, 100)
+plt.plot(x, np.sin(x), label="Sine", linestyle="--")
+plt.plot(x, np.cos(x), label="Cosine", linestyle="-.")
+plt.title("Sine and Cosine")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Bar Chart
+categories = ["A", "B", "C", "D", "E"]
+values = [23, 45, 56, 78, 34]
+plt.bar(categories, values, color='skyblue', edgecolor="black")
+plt.title("Category-wise Values")
+plt.show()
+
+# Scatter Plot with Annotations
+x = np.random.rand(10) * 10
+y = np.random.rand(10) * 10
+plt.scatter(x, y, c="green", s=80, edgecolor="black")
+for i in range(10):
+    plt.annotate(f"P{i+1}", (x[i], y[i]), xytext=(5, 5), textcoords="offset points")
+plt.title("Scatter with Annotations")
+plt.grid(True)
+plt.show()
+
+# Pie Chart
+labels = ['Apple', 'Banana', 'Grapes', 'Orange', 'Mango']
+sizes = [25, 15, 30, 10, 20]
+plt.pie(sizes, labels=labels, autopct='%1.1f%%', explode=(0, 0, 0.1, 0, 0))
+plt.title("Fruit Distribution")
+plt.show()
