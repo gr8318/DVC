@@ -1,0 +1,20 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = sns.load_dataset("penguins")
+sns.set_style("whitegrid")
+
+# Bar Plot
+sns.barplot(x="species", y="body_mass_g", data=df, palette="viridis")
+plt.title("Body Mass of Penguin Species")
+plt.show()
+
+# Box Plot
+sns.boxplot(x="species", y="flipper_length_mm", data=df, hue="sex", palette="coolwarm")
+plt.title("Flipper Length by Species and Sex")
+plt.show()
+
+# Violin Plot
+sns.violinplot(x="species", y="bill_length_mm", data=df, hue="sex", split=True, palette="Set2")
+plt.title("Bill Length by Species and Sex")
+plt.show()
