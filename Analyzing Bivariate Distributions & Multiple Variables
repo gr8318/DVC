@@ -1,18 +1,23 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
 
-df = sns.load_dataset("tips")
+# Load your CSV file
+df = pd.read_csv("/mnt/data/Chocolate Sales.csv")
 
-# Scatter Plot
-sns.scatterplot(x="total_bill", y="tip", data=df, hue="sex")
-plt.title("Total Bill vs Tip")
+# Show first few rows (optional)
+print(df.head())
+
+# Scatter Plot: Change 'total_bill' and 'tip' to appropriate numerical columns
+sns.scatterplot(x="Sales", y="Profit", data=df, hue="Region")
+plt.title("Sales vs Profit by Region")
 plt.show()
 
-# Pair Plot
-sns.pairplot(df, hue="sex")
+# Pair Plot: Automatically works on numerical columns
+sns.pairplot(df, hue="Region")
 plt.show()
 
-# Heatmap
+# Heatmap: Correlation between numeric columns
 sns.heatmap(df.corr(numeric_only=True), annot=True, cmap="coolwarm")
 plt.title("Correlation Heatmap")
 plt.show()
