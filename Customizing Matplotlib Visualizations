@@ -1,35 +1,48 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 import numpy as np
 
-# Line Plot
-x = np.linspace(0, 10, 100)
-plt.plot(x, np.sin(x), label="Sine", linestyle="--")
-plt.plot(x, np.cos(x), label="Cosine", linestyle="-.")
-plt.title("Sine and Cosine")
+# Load dataset
+df = pd.read_csv("C:\\Users\\ngoku\\Downloads\\amazon.csv")
+
+# Clean data
+df["discounted_price"] = df["discounted_price"].str.replace("₹", "").str.replace(",", "").astype(float)
+df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
+df["rating_count"] = pd.to_numeric(df["rating_count"].str.replace(",", ""), errors="coerce")
+df["main_category"] = df["category"].str.split("|").str[0]
+df.dropna(subset=["discounted_price", "rating", "rating_count"], inplace=True)
+
+# 1. Line Plot: Price trend of first 50 products
+plt.plot(df["discounted_price"].head(50).values, label="Discounted Price", linestyle="--")
+plt.title("Price Trend of First 50 Products")
+plt.xlabel("Product Index")
+plt.ylabel("Price (INR)")
+plt.grid(True)
 plt.legend()
-plt.grid(True)
 plt.show()
 
-# Bar Chart
-categories = ["A", "B", "C", "D", "E"]
-values = [23, 45, 56, 78, 34]
-plt.bar(categories, values, color='skyblue', edgecolor="black")
-plt.title("Category-wise Values")
+# 2. Bar Chart: Top 5 categories by average rating count
+top_cat = df.groupby("main_category")["rating_count"].mean().sort_values(ascending=False).head(5)
+plt.bar(top_cat.index, top_cat.values, color='skyblue', edgecolor="black")
+plt.title("Top 5 Categories by Avg Rating Count")
+plt.ylabel("Average Rating Count")
+plt.xticks(rotation=45)
 plt.show()
 
-# Scatter Plot with Annotations
-x = np.random.rand(10) * 10
-y = np.random.rand(10) * 10
-plt.scatter(x, y, c="green", s=80, edgecolor="black")
+# 3. Scatter Plot with Annotations: Rating vs Price for 10 products
+sample_df = df.head(10)
+plt.scatter(sample_df["discounted_price"], sample_df["rating"], c="green", s=80, edgecolor="black")
 for i in range(10):
-    plt.annotate(f"P{i+1}", (x[i], y[i]), xytext=(5, 5), textcoords="offset points")
-plt.title("Scatter with Annotations")
+    plt.annotate(f"P{i+1}", (sample_df["discounted_price"].iloc[i], sample_df["rating"].iloc[i]), 
+                 xytext=(5,5), textcoords="offset points")
+plt.title("Rating vs Price (First 10 Products)")
+plt.xlabel("Discounted Price")
+plt.ylabel("Rating")
 plt.grid(True)
 plt.show()
 
-# Pie Chart
-labels = ['Apple', 'Banana', 'Grapes', 'Orange', 'Mango']
-sizes = [25, 15, 30, 10, 20]
-plt.pie(sizes, labels=labels, autopct='%1.1f%%', explode=(0, 0, 0.1, 0, 0))
-plt.title("Fruit Distribution")
+# 4. Pie Chart: Category-wise distribution (top 5)
+cat_counts = df["main_category"].value_counts().head(5)
+plt.pie(cat_counts.values, labels=cat_counts.index, autopct='%1.1f%%', explode=[0.1]*5)
+plt.title("Top 5 Categories by Product Count")
 plt.show()
