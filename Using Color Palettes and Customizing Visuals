@@ -1,20 +1,27 @@
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-df = sns.load_dataset("penguins")
+df = pd.read_csv("C:\\Users\\ngoku\\Downloads\\amazon.csv")
+
+df["actual_price"] = df["actual_price"].str.replace("₹", "").str.replace(",", "").astype(float)
+df["discounted_price"] = df["discounted_price"].str.replace("₹", "").str.replace(",", "").astype(float)
+df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
+df["category"] = df["category"].str.split("|").str[0]
+df = df.dropna(subset=["actual_price", "discounted_price", "rating"])
+
+top_cats = df["category"].value_counts().nlargest(5).index
+df = df[df["category"].isin(top_cats)]
 sns.set_style("whitegrid")
 
-# Bar Plot
-sns.barplot(x="species", y="body_mass_g", data=df, palette="viridis")
-plt.title("Body Mass of Penguin Species")
+sns.barplot(x="category", y="rating", data=df, palette="viridis")
+plt.title("Average Rating by Category")
 plt.show()
 
-# Box Plot
-sns.boxplot(x="species", y="flipper_length_mm", data=df, hue="sex", palette="coolwarm")
-plt.title("Flipper Length by Species and Sex")
+sns.boxplot(x="category", y="actual_price", data=df, palette="coolwarm")
+plt.title("Actual Price by Category")
 plt.show()
 
-# Violin Plot
-sns.violinplot(x="species", y="bill_length_mm", data=df, hue="sex", split=True, palette="Set2")
-plt.title("Bill Length by Species and Sex")
+sns.violinplot(x="category", y="discounted_price", data=df, palette="Set2")
+plt.title("Discounted Price by Category")
 plt.show()
