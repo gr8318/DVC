@@ -2,22 +2,27 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# Load your CSV file
-df = pd.read_csv("/mnt/data/Chocolate Sales.csv")
+df = pd.read_csv("C:\\Users\\ngoku\\Downloads\\amazon.csv")
 
-# Show first few rows (optional)
-print(df.head())
+# Clean and convert columns
+df["discounted_price"] = df["discounted_price"].str.replace("₹", "").str.replace(",", "").astype(float)
+df["actual_price"] = df["actual_price"].str.replace("₹", "").str.replace(",", "").astype(float)
+df["discount_percentage"] = df["discount_percentage"].str.replace("%", "").astype(float)
+df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
+df["rating_count"] = pd.to_numeric(df["rating_count"].str.replace(",", ""), errors="coerce")
+df["main_category"] = df["category"].str.split("|").str[0]
+df.dropna(subset=["discounted_price", "actual_price", "rating", "rating_count", "discount_percentage"], inplace=True)
 
-# Scatter Plot: Change 'total_bill' and 'tip' to appropriate numerical columns
-sns.scatterplot(x="Sales", y="Profit", data=df, hue="Region")
-plt.title("Sales vs Profit by Region")
+# Scatter Plot
+sns.scatterplot(x="discounted_price", y="rating", data=df, hue="main_category")
+plt.title("Price vs Rating by Category")
 plt.show()
 
-# Pair Plot: Automatically works on numerical columns
-sns.pairplot(df, hue="Region")
+# Pair Plot
+sns.pairplot(df[["discounted_price", "actual_price", "rating", "rating_count", "discount_percentage"]])
 plt.show()
 
-# Heatmap: Correlation between numeric columns
+# Heatmap
 sns.heatmap(df.corr(numeric_only=True), annot=True, cmap="coolwarm")
 plt.title("Correlation Heatmap")
 plt.show()
