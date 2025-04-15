@@ -1,21 +1,31 @@
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-df = sns.load_dataset("penguins").dropna()
+# Load and clean dataset
+df = pd.read_csv("C:\\Users\\ngoku\\Downloads\\amazon.csv")
+
+df["actual_price"] = df["actual_price"].str.replace("₹", "").str.replace(",", "").astype(float)
+df["discounted_price"] = df["discounted_price"].str.replace("₹", "").str.replace(",", "").astype(float)
+df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
+df["category"] = df["category"].str.split("|").str[0]
+df = df.dropna(subset=["actual_price", "discounted_price", "rating"])
 
 # Regression Plot
-sns.regplot(x="bill_length_mm", y="bill_depth_mm", data=df, color="blue", line_kws={'color':'red'})
-plt.title("Bill Length vs Bill Depth")
+sns.regplot(x="actual_price", y="discounted_price", data=df, color="blue", line_kws={'color': 'red'})
+plt.title("Actual Price vs Discounted Price")
+plt.xlabel("Actual Price (₹)")
+plt.ylabel("Discounted Price (₹)")
 plt.show()
 
 # Correlation Heatmap
-sns.heatmap(df.iloc[:, 2:6].corr(), annot=True, cmap="coolwarm")
+sns.heatmap(df[["actual_price", "discounted_price", "rating"]].corr(), annot=True, cmap="coolwarm")
 plt.title("Correlation Heatmap")
 plt.show()
 
 # Pair Plot with Regression Lines
-sns.pairplot(df, kind="reg", hue="species")
+sns.pairplot(df[["actual_price", "discounted_price", "rating", "category"]], kind="reg", hue="category")
 plt.show()
 
 # Covariance Matrix
-print("Covariance Matrix:\n", df.iloc[:, 2:6].cov())
+print("Covariance Matrix:\n", df[["actual_price", "discounted_price", "rating"]].cov())
