@@ -1,23 +1,32 @@
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-df = sns.load_dataset("penguins")
-sns.set_theme(style="darkgrid")
-sns.set_context("talk")
+df = pd.read_csv("C:\\Users\\ngoku\\Downloads\\amazon.csv")
+
+# Clean and preprocess
+df["actual_price"] = df["actual_price"].str.replace("₹", "").str.replace(",", "").astype(float)
+df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
+df["category"] = df["category"].str.split("|").str[0]
+
+sns.set_theme(style="darkgrid", context="talk")
 
 # Histogram
-sns.histplot(df["body_mass_g"], bins=30, kde=True, color="purple", edgecolor="black")
-plt.title("Penguin Body Mass Distribution")
+sns.histplot(df["actual_price"], bins=30, kde=True, color="purple", edgecolor="black")
+plt.title("Distribution of Actual Prices")
 plt.show()
 
 # Scatter Plot
-sns.scatterplot(x="flipper_length_mm", y="bill_length_mm", data=df, hue="species", palette="Set1")
-plt.title("Flipper Length vs Bill Length")
+sns.scatterplot(x="actual_price", y="rating", data=df, hue="category", palette="Set2", alpha=0.7)
+plt.title("Actual Price vs Rating")
 plt.grid(True, linestyle="--", alpha=0.5)
+plt.legend(bbox_to_anchor=(1.05, 1), loc=2)
+plt.tight_layout()
 plt.show()
 
-# Box Plot with Despine
-sns.boxplot(x="species", y="body_mass_g", data=df, palette="coolwarm")
+# Box Plot
+top_cats = df["category"].value_counts().nlargest(5).index
+sns.boxplot(x="category", y="actual_price", data=df[df["category"].isin(top_cats)], palette="coolwarm")
 sns.despine(left=True, bottom=True)
-plt.title("Body Mass by Species")
+plt.title("Price by Top Categories")
 plt.show()
